@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Mini Game bài tây & Tarot web</title>
+<style>
+body {font-family: 'Segoe UI'; background:#f7d6df; text-align:center; padding:20px;}
+h1{color:#ff4d88;}
+input{padding:8px;border-radius:15px;border:1px solid #ccc;width:200px;}
+button{padding:8px 12px;border:none;border-radius:15px;background:#ff6fa5;color:white;cursor:pointer;margin:5px;}
+.card{margin:20px auto;width:400px;background:#f1d9df;padding:20px;border-radius:20px;}
+.hidden{display:none;}
+.stars span{font-size:30px;cursor:pointer;}
+.ruleBox{display:none;text-align:left;font-size:14px;background:white;padding:10px;border-radius:10px;margin-top:10px;}
+.popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.2);display:none;max-width:320px; max-height: 80vh; overflow-y: auto;}
+.qr{width:120px;margin-top:10px;}
+.closeBtn{margin-top:10px;background:#ff4d88;}
+.history-text {text-align: left; font-size: 14px; line-height: 1.5; margin-bottom: 15px;}
+</style>
+</head>
+<body>
+
+<h1>Mini Game bài tây & Tarot web cùng ytho nhaa❤️</h1>
+
+<input id="fbName" placeholder="Nhập tên FB của ng dp">
+<button onclick="submitName()">Xác nhận</button>
+
+<div class="card">
+<button onclick="startRating()">Đánh giáa 📩</button>
+<button onclick="viewHistory()">🕒 Lịch sử gacha</button>
+<button onclick="toggleRule()">📜 Thể lệ trúng thưởng</button>
+
+<div id="rule" class="ruleBox">
+<b> thể lệ khi đánh giá bằng hoặc trên 4⭐:</b><br>
+70% : 3k<br>5% : 0k<br>5% : 5k<br>20% : 3 câu trải nghiệm tự bóc tarot web (5 lá )<br><br>
+<b> thể lệ khi đánh giá bằng hoặc dưới 4⭐:</b><br>
+40% : giảm 2%<br>5% : giảm 3%<br>5% : giảm 5%<br>50% : 3 câu trải nghiệm tự bóc tarot web (5 lá )
+</div>
+
+<div id="rating" class="hidden">
+<h3>Đánh giá</h3>
+<div class="stars">
+<span onclick="rate(1)">⭐</span>
+<span onclick="rate(2)">⭐</span>
+<span onclick="rate(3)">⭐</span>
+<span onclick="rate(4)">⭐</span>
+<span onclick="rate(5)">⭐</span>
+</div>
+</div>
+
+<div id="spinBox" class="hidden">
+<button onclick="startGacha()">🎰 Quayyyyyyy</button>
+</div>
+</div>
+
+<div id="popup" class="popup"></div>
+
+<script>
+let user="";
+let rating=0;
+let tarotLink="https://lamtho1302-droid.github.io/minigametarotytho/";
+
+function normalize(n){return n.trim().toLowerCase();}
+
+function submitName(){
+ let name=normalize(document.getElementById("fbName").value);
+ if(!name) return alert("Nhập tên fb đii ng dp!");
+
+ user=name; // Cập nhật user để có thể xem lịch sử
+ if(localStorage.getItem("done_"+name)){
+   alert("FB này đã quay rồi! ng dp có thể bấm vào 'Lịch sử' để xem lại nhé.");
+   return;
+ }
+ alert("OK ròi ng dp!");
+}
+
+function toggleRule(){
+ let r=document.getElementById("rule");
+ r.style.display=r.style.display==='block'?'none':'block';
+}
+
+function startRating(){
+ if(!user){alert("Nhập tên đi ng dp!");return;}
+
+ if(localStorage.getItem("done_"+user)){
+   alert("ng dp đã quay rồi! Hãy bấm xem Lịch sử nhaaa.");
+   return;
+ }
+
+ document.getElementById("rating").classList.remove("hidden");
+}
+
+function rate(s){
+ rating=s;
+ document.getElementById("rating").classList.add("hidden");
+ document.getElementById("spinBox").classList.remove("hidden");
+}
+
+function copyLink(){navigator.clipboard.writeText(tarotLink);alert("Đã copy thành công");}
+
+function showPopup(html){
+ let p=document.getElementById("popup");
+ p.innerHTML=html+"<br><button class='closeBtn' onclick='closePopup()'>Đónggg</button>";
+ p.style.display="block";
+}
+
+function closePopup(){document.getElementById("popup").style.display="none";}
+
+function random(){return Math.random()*100;}
+
+function startGacha(){
+ if(localStorage.getItem("done_"+user)){
+   alert("ng dp đã quay ròiii!");
+   return;
+ }
+
+ let r=random();
+ let text="";
+
+ if(rating>=4){
+  if(r<70) text="🎉 3k";
+  else if(r<75) text="🎉 0k";
+  else if(r<80) text="🎉 5k";
+  else text=`🎉 Tarot<br>
+  <input value="${tarotLink}" readonly>
+  <button onclick="copyLink()">Copy</button>
+  <br><img class='qr' src="a.jpg">`;
+ }else{
+  if(r<40) text="🎉 giảm 2%";
+  else if(r<45) text="🎉 giảm 3%";
+  else if(r<50) text="🎉 giảm 5%";
+  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần <br>
+  <input value="${tarotLink}" readonly>
+  <button onclick="copyLink()">Copy</button>
+  <br><img class='qr' src="a.jpg">`;
+ }
+
+ // Lưu trạng thái đã quay
+ localStorage.setItem("done_"+user,"1");
+ 
+ // Lưu thêm thông tin lịch sử
+ let timeString = new Date().toLocaleString('vi-VN');
+ let historyData = {
+     time: timeString,
+     rating: rating,
+     result: text
+ };
+ localStorage.setItem("history_"+user, JSON.stringify(historyData));
+
+ document.getElementById("spinBox").classList.add("hidden");
+
+ showPopup(text+"<br><b>📸 Chụp lại gửi ytho mới có hiệu lực nhaaa!</b>");
+}
+
+function viewHistory(){
+ // Nếu chưa xác nhận thì thử lấy từ ô input
+ if(!user) {
+     let name=normalize(document.getElementById("fbName").value);
+     if(!name) return alert(" nhập tên FB để xem lịch sử nha ng dp!");
+     user = name;
+ }
+
+ let histStr = localStorage.getItem("history_"+user);
+ if(histStr){
+     let hist = JSON.parse(histStr);
+     let html = `<div class="history-text">
+         <h3 style="color:#ff4d88; text-align:center; margin-top:0;">Lịch sử nhận thưởngg</h3>
+         <b>👤 Tên FB của ng dp:</b> ${user}<br>
+         <b>🕒 Thời gian:</b> ${hist.time}<br>
+         <b>⭐ Đánh giá:</b> ${hist.rating} sao<br>
+         <b>🎁 Phần thưởng:</b><br><br>
+         <div style="text-align:center;">${hist.result}</div>
+         </div>
+         <div style="text-align:center;"><b>📸 Chụp lại gửi ytho mới có hiệu lực nhaaa!</b></div>`;
+     showPopup(html);
+ } else {
+     alert("FB '"+user+"' chưa có lịch sử gacha nào!");
+ }
+}
+</script>
+
+</body>
+</html>
