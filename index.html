@@ -11,7 +11,23 @@ input{padding:8px;border-radius:15px;border:1px solid #ccc;width:200px;}
 button{padding:8px 12px;border:none;border-radius:15px;background:#ff6fa5;color:white;cursor:pointer;margin:5px;}
 .card{margin:20px auto;width:400px;background:#f1d9df;padding:20px;border-radius:20px;}
 .hidden{display:none;}
-.stars span{font-size:30px;cursor:pointer;}
+
+/* --- CSS MỚI CHO HIỆU ỨNG SAO ĐÁNH GIÁ --- */
+.stars span {
+  font-size: 40px; /* Chỉnh to lên một xíu cho dễ nhìn */
+  cursor: pointer;
+  color: transparent; /* Ngôi sao trong suốt */
+  -webkit-text-stroke: 2px black; /* Viền đen */
+  transition: all 0.2s ease; /* Hiệu ứng chuyển màu mượt mà */
+  display: inline-block;
+}
+.stars span.gold {
+  color: #ffcc00; /* Màu vàng khi di chuột vào */
+  -webkit-text-stroke: 0px; /* Bỏ viền đen khi đã vàng */
+  text-shadow: 0 0 3px #ffaa00; /* Thêm chút bóng cho lung linh */
+}
+/* --------------------------------------- */
+
 .ruleBox{display:none;text-align:left;font-size:14px;background:white;padding:10px;border-radius:10px;margin-top:10px;}
 .popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.2);display:none;max-width:320px; max-height: 80vh; overflow-y: auto;}
 .qr{width:120px;margin-top:10px;}
@@ -36,17 +52,17 @@ button{padding:8px 12px;border:none;border-radius:15px;background:#ff6fa5;color:
 70% :1 câu bài tây nhanh giá 3k<br>5% :1 câu bài tây nhanh giá 0k<br>5% :1 câu bài tây nhanh giá 5k<br>20% : 3 câu trải nghiệm tự bóc tarot web (5 lá )<br><br>
 <b> thể lệ khi đánh giá dưới 4⭐:</b><br>
 40% : giảm giá 2% cho 1 câu bài tây nhanh <br>5% : giảm giá 3% cho 1 câu bài tây nhanh <br>5% : giảm giá 5% cho 1 câu bài tây nhanh<br>50% : 3 câu trải nghiệm tự bóc tarot web (5 lá )<br><br>
- <b> Lưu ý : Tất cả các phần thưởng gacha được phải chụp gửi ytho mới có hiệu lực, tính luôn cả giải thưởng lưu trong lịch sử đề phòng mọi người quên chụp ạaa</b><br
+ <b> Lưu ý : Tất cả các phần thưởng gacha được phải chụp gửi ytho mới có hiệu lực, tính luôn cả giải thưởng lưu trong lịch sử đề phòng mọi người quên chụp ạaa</b><br>
 </div>
 
 <div id="rating" class="hidden">
 <h3>Đánh giá</h3>
 <div class="stars">
-<span onclick="rate(1)">⭐</span>
-<span onclick="rate(2)">⭐</span>
-<span onclick="rate(3)">⭐</span>
-<span onclick="rate(4)">⭐</span>
-<span onclick="rate(5)">⭐</span>
+<span onmouseover="hoverStars(1)" onmouseout="resetStars()" onclick="rate(1)">★</span>
+<span onmouseover="hoverStars(2)" onmouseout="resetStars()" onclick="rate(2)">★</span>
+<span onmouseover="hoverStars(3)" onmouseout="resetStars()" onclick="rate(3)">★</span>
+<span onmouseover="hoverStars(4)" onmouseout="resetStars()" onclick="rate(4)">★</span>
+<span onmouseover="hoverStars(5)" onmouseout="resetStars()" onclick="rate(5)">★</span>
 </div>
 </div>
 
@@ -92,6 +108,26 @@ function startRating(){
  document.getElementById("rating").classList.remove("hidden");
 }
 
+/* --- HÀM MỚI CHO HIỆU ỨNG SAO ĐÁNH GIÁ --- */
+function hoverStars(n) {
+  let stars = document.querySelectorAll(".stars span");
+  for (let i = 0; i < stars.length; i++) {
+    if (i < n) {
+      stars[i].classList.add("gold");
+    } else {
+      stars[i].classList.remove("gold");
+    }
+  }
+}
+
+function resetStars() {
+  let stars = document.querySelectorAll(".stars span");
+  for (let i = 0; i < stars.length; i++) {
+    stars[i].classList.remove("gold");
+  }
+}
+/* ---------------------------------------- */
+
 function rate(s){
  rating=s;
  document.getElementById("rating").classList.add("hidden");
@@ -123,7 +159,7 @@ function startGacha(){
   if(r<70) text="🎉 1 câu bài tây nhanh giá 3k";
   else if(r<75) text="🎉1 câu bài tây nhanh giá 0k";
   else if(r<80) text="🎉1 câu bài tây nhanh giá  5k";
-  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần copy link hoặc quét qr bên dưới để sử dụng dịch vụ<br>
+  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần hãy copy link hoặc quét qr bên dưới để sử dụng dịch vụ<br>
   <input value="${tarotLink}" readonly>
   <button onclick="copyLink()">Copy</button>
   <br><img class='qr' src="a.jpg">`;
@@ -131,7 +167,7 @@ function startGacha(){
   if(r<40) text="🎉 giảm giá 2% cho 1 câu bài tây nhanh  ";
   else if(r<45) text="🎉 giảm giá  3% cho 1 câu bài tây nhanh";
   else if(r<50) text="🎉 giảm giá  5% cho 1 câu bài tây nhanh ";
-  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần copy link hoặc quét qr bên dưới để sử dụng dịch vụ <br>
+  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần hãy copy link hoặc quét qr bên dưới để sử dụng dịch vụ <br>
   <input value="${tarotLink}" readonly>
   <button onclick="copyLink()">Copy</button>
   <br><img class='qr' src="a.jpg">`;
