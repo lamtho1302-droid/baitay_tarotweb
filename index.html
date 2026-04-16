@@ -244,6 +244,142 @@ function viewHistory(){
 </html>
 }
 
+function startRating(){
+ if(!user){alert("Nhập tên fb đi ng dp!");return;}
+
+ if(localStorage.getItem("done_"+user)){
+   alert("ng dp đã quay rồi! Hãy bấm xem Lịch sử nhaaa.");
+   return;
+ }
+ document.getElementById("ratingArea").classList.remove("hidden");
+ reRate(); // Reset về trạng thái chưa chọn
+}
+
+// Hiệu ứng di chuột
+function hoverStars(n) {
+  updateStarColors(n);
+}
+
+// Reset màu khi không di chuột (nhưng vẫn giữ màu nếu đã click)
+function resetStars() {
+  updateStarColors(tempRating);
+}
+
+// Hàm tô màu sao chung
+function updateStarColors(n) {
+  let stars = document.querySelectorAll(".stars span");
+  stars.forEach((star, index) => {
+    if (index < n) star.classList.add("gold");
+    else star.classList.remove("gold");
+  });
+}
+
+// Khi ấn chọn số sao
+function rate(s){
+ tempRating = s;
+ rating = s;
+ updateStarColors(s);
+ document.getElementById("confirmBtns").classList.remove("hidden");
+}
+
+// Ấn nút Đánh giá lại
+function reRate() {
+    tempRating = 0;
+    rating = 0;
+    updateStarColors(0);
+    document.getElementById("confirmBtns").classList.add("hidden");
+    document.getElementById("spinBox").classList.add("hidden");
+    document.getElementById("ratingArea").classList.remove("hidden");
+}
+
+// Ấn nút Okiii
+function confirmOk() {
+    document.getElementById("ratingArea").classList.add("hidden");
+    document.getElementById("spinBox").classList.remove("hidden");
+}
+
+function copyLink(){navigator.clipboard.writeText(tarotLink);alert("Đã copy thành công");}
+
+function showPopup(html){
+ let p=document.getElementById("popup");
+ p.innerHTML=html+"<br><button class='closeBtn' onclick='closePopup()'>Đónggg</button>";
+ p.style.display="block";
+}
+
+function closePopup(){document.getElementById("popup").style.display="none";}
+
+function random(){return Math.random()*100;}
+
+function startGacha(){
+ if(localStorage.getItem("done_"+user)){
+   alert("ng dp đã quay ròiii!");
+   return;
+ }
+
+ let r=random();
+ let text="";
+
+ if(rating>=4){
+  if(r<70) text="🎉 1 câu bài tây nhanh giá 3k";
+  else if(r<75) text="🎉1 câu bài tây nhanh giá 0k";
+  else if(r<80) text="🎉1 câu bài tây nhanh giá  5k";
+  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần copy link hoặc quét qr bên dưới để sử dụng dịch vụ<br>
+  <input value="${tarotLink}" readonly>
+  <button onclick="copyLink()">Copy</button>
+  <br><img class='qr' src="a.jpg">`;
+ }else{
+  if(r<40) text="🎉 giảm giá 2% cho 1 câu bài tây nhanh  ";
+  else if(r<45) text="🎉 giảm giá  3% cho 1 câu bài tây nhanh";
+  else if(r<50) text="🎉 giảm giá  5% cho 1 câu bài tây nhanh ";
+  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần copy link hoặc quét qr bên dưới để sử dụng dịch vụ <br>
+  <input value="${tarotLink}" readonly>
+  <button onclick="copyLink()">Copy</button>
+  <br><img class='qr' src="a.jpg">`;
+ }
+
+ localStorage.setItem("done_"+user,"1");
+ let timeString = new Date().toLocaleString('vi-VN');
+ let historyData = {
+     time: timeString,
+     rating: rating,
+     result: text
+ };
+ localStorage.setItem("history_"+user, JSON.stringify(historyData));
+
+ document.getElementById("spinBox").classList.add("hidden");
+ showPopup(text+"<br><b>📸 Chụp lại gửi ytho mới có hiệu lực nhaaa!</b>");
+}
+
+function viewHistory(){
+ if(!user) {
+     let name=normalize(document.getElementById("fbName").value);
+     if(!name) return alert(" nhập tên FB để xem lịch sử nha ng dp!");
+     user = name;
+ }
+
+ let histStr = localStorage.getItem("history_"+user);
+ if(histStr){
+     let hist = JSON.parse(histStr);
+     let html = `<div class="history-text">
+         <h3 style="color:#ff4d88; text-align:center; margin-top:0;">Lịch sử nhận thưởngg</h3>
+         <b>👤 Tên FB của ng dp:</b> ${user}<br>
+         <b>🕒 Thời gian:</b> ${hist.time}<br>
+         <b>⭐ Đánh giá:</b> ${hist.rating} sao<br>
+         <b>🎁 Phần thưởng:</b><br><br>
+         <div style="text-align:center;">${hist.result}</div>
+         </div>
+         <div style="text-align:center;"><b>📸 Chụp lại gửi ytho mới có hiệu lực nhaaa!</b></div>`;
+     showPopup(html);
+ } else {
+     alert("FB '"+user+"' chưa có lịch sử gacha nào!");
+ }
+}
+</script>
+
+</body>
+</html>
+}
+
 /* --- HÀM MỚI CHO HIỆU ỨNG SAO ĐÁNH GIÁ --- */
 function hoverStars(n) {
   let stars = document.querySelectorAll(".stars span");
