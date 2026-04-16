@@ -2,7 +2,6 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
- 
 <title>Mini Game gacha bài tây & Tarot web</title>
 <style>
 body {font-family: 'Segoe UI'; background:#f7d6df; text-align:center; padding:20px;}
@@ -17,11 +16,10 @@ button{padding:8px 12px;border:none;border-radius:15px;background:#ff6fa5;color:
   font-size: 40px;
   cursor: pointer;
   color: transparent;
-  -webkit-text-stroke: 1.5px black; /* Viền đen khi chưa chọn */
+  -webkit-text-stroke: 1.5px black;
   transition: all 0.2s;
   display: inline-block;
 }
-/* Khi được tô vàng (do di chuột hoặc đã click) */
 .stars span.gold {
   color: #ffcc00;
   -webkit-text-stroke: 0px;
@@ -33,8 +31,6 @@ button{padding:8px 12px;border:none;border-radius:15px;background:#ff6fa5;color:
 .qr{width:120px;margin-top:10px;}
 .closeBtn{margin-top:10px;background:#ff4d88;}
 .history-text {text-align: left; font-size: 14px; line-height: 1.5; margin-bottom: 15px;}
-
-/* Nút phụ sau khi đánh giá */
 .confirm-btns { margin-top: 15px; }
 .btn-ok { background: #4CAF50 !important; }
 .btn-again { background: #888 !important; }
@@ -86,7 +82,7 @@ button{padding:8px 12px;border:none;border-radius:15px;background:#ff6fa5;color:
 <script>
 let user="";
 let rating=0;
-let tempRating=0; // Biến lưu số sao đã click
+let tempRating=0; 
 let tarotLink="https://lamtho1302-droid.github.io/minigametarotytho/";
 
 function normalize(n){return n.trim().toLowerCase();}
@@ -116,20 +112,17 @@ function startRating(){
    return;
  }
  document.getElementById("ratingArea").classList.remove("hidden");
- reRate(); // Reset về trạng thái chưa chọn
+ reRate(); 
 }
 
-// Hiệu ứng di chuột
 function hoverStars(n) {
   updateStarColors(n);
 }
 
-// Reset màu khi không di chuột (nhưng vẫn giữ màu nếu đã click)
 function resetStars() {
   updateStarColors(tempRating);
 }
 
-// Hàm tô màu sao chung
 function updateStarColors(n) {
   let stars = document.querySelectorAll(".stars span");
   stars.forEach((star, index) => {
@@ -138,7 +131,6 @@ function updateStarColors(n) {
   });
 }
 
-// Khi ấn chọn số sao
 function rate(s){
  tempRating = s;
  rating = s;
@@ -146,7 +138,6 @@ function rate(s){
  document.getElementById("confirmBtns").classList.remove("hidden");
 }
 
-// Ấn nút Đánh giá lại
 function reRate() {
     tempRating = 0;
     rating = 0;
@@ -156,7 +147,6 @@ function reRate() {
     document.getElementById("ratingArea").classList.remove("hidden");
 }
 
-// Ấn nút Okiii
 function confirmOk() {
     document.getElementById("ratingArea").classList.add("hidden");
     document.getElementById("spinBox").classList.remove("hidden");
@@ -187,7 +177,7 @@ function startGacha(){
   if(r<70) text="🎉 1 câu bài tây nhanh giá 3k";
   else if(r<75) text="🎉1 câu bài tây nhanh giá 0k";
   else if(r<80) text="🎉1 câu bài tây nhanh giá  5k";
-  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần hãy copy link hoặc quét qr bên dưới để sử dụng dịch vụ<br>
+  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần copy link hoặc quét qr bên dưới để sử dụng dịch vụ<br>
   <input value="${tarotLink}" readonly>
   <button onclick="copyLink()">Copy</button>
   <br><img class='qr' src="a.jpg">`;
@@ -195,7 +185,7 @@ function startGacha(){
   if(r<40) text="🎉 giảm giá 2% cho 1 câu bài tây nhanh  ";
   else if(r<45) text="🎉 giảm giá  3% cho 1 câu bài tây nhanh";
   else if(r<50) text="🎉 giảm giá  5% cho 1 câu bài tây nhanh ";
-  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần hãy copy link hoặc quét qr bên dưới để sử dụng dịch vụ <br>
+  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần copy link hoặc quét qr bên dưới để sử dụng dịch vụ <br>
   <input value="${tarotLink}" readonly>
   <button onclick="copyLink()">Copy</button>
   <br><img class='qr' src="a.jpg">`;
@@ -215,255 +205,6 @@ function startGacha(){
 }
 
 function viewHistory(){
- if(!user) {
-     let name=normalize(document.getElementById("fbName").value);
-     if(!name) return alert(" nhập tên FB để xem lịch sử nha ng dp!");
-     user = name;
- }
-
- let histStr = localStorage.getItem("history_"+user);
- if(histStr){
-     let hist = JSON.parse(histStr);
-     let html = `<div class="history-text">
-         <h3 style="color:#ff4d88; text-align:center; margin-top:0;">Lịch sử nhận thưởngg</h3>
-         <b>👤 Tên FB của ng dp:</b> ${user}<br>
-         <b>🕒 Thời gian:</b> ${hist.time}<br>
-         <b>⭐ Đánh giá:</b> ${hist.rating} sao<br>
-         <b>🎁 Phần thưởng:</b><br><br>
-         <div style="text-align:center;">${hist.result}</div>
-         </div>
-         <div style="text-align:center;"><b>📸 Chụp lại gửi ytho mới có hiệu lực nhaaa!</b></div>`;
-     showPopup(html);
- } else {
-     alert("FB '"+user+"' chưa có lịch sử gacha nào!");
- }
-}
-</script>
-
-</body>
-</html>
-}
-
-function startRating(){
- if(!user){alert("Nhập tên fb đi ng dp!");return;}
-
- if(localStorage.getItem("done_"+user)){
-   alert("ng dp đã quay rồi! Hãy bấm xem Lịch sử nhaaa.");
-   return;
- }
- document.getElementById("ratingArea").classList.remove("hidden");
- reRate(); // Reset về trạng thái chưa chọn
-}
-
-// Hiệu ứng di chuột
-function hoverStars(n) {
-  updateStarColors(n);
-}
-
-// Reset màu khi không di chuột (nhưng vẫn giữ màu nếu đã click)
-function resetStars() {
-  updateStarColors(tempRating);
-}
-
-// Hàm tô màu sao chung
-function updateStarColors(n) {
-  let stars = document.querySelectorAll(".stars span");
-  stars.forEach((star, index) => {
-    if (index < n) star.classList.add("gold");
-    else star.classList.remove("gold");
-  });
-}
-
-// Khi ấn chọn số sao
-function rate(s){
- tempRating = s;
- rating = s;
- updateStarColors(s);
- document.getElementById("confirmBtns").classList.remove("hidden");
-}
-
-// Ấn nút Đánh giá lại
-function reRate() {
-    tempRating = 0;
-    rating = 0;
-    updateStarColors(0);
-    document.getElementById("confirmBtns").classList.add("hidden");
-    document.getElementById("spinBox").classList.add("hidden");
-    document.getElementById("ratingArea").classList.remove("hidden");
-}
-
-// Ấn nút Okiii
-function confirmOk() {
-    document.getElementById("ratingArea").classList.add("hidden");
-    document.getElementById("spinBox").classList.remove("hidden");
-}
-
-function copyLink(){navigator.clipboard.writeText(tarotLink);alert("Đã copy thành công");}
-
-function showPopup(html){
- let p=document.getElementById("popup");
- p.innerHTML=html+"<br><button class='closeBtn' onclick='closePopup()'>Đónggg</button>";
- p.style.display="block";
-}
-
-function closePopup(){document.getElementById("popup").style.display="none";}
-
-function random(){return Math.random()*100;}
-
-function startGacha(){
- if(localStorage.getItem("done_"+user)){
-   alert("ng dp đã quay ròiii!");
-   return;
- }
-
- let r=random();
- let text="";
-
- if(rating>=4){
-  if(r<70) text="🎉 1 câu bài tây nhanh giá 3k";
-  else if(r<75) text="🎉1 câu bài tây nhanh giá 0k";
-  else if(r<80) text="🎉1 câu bài tây nhanh giá  5k";
-  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần hãy copy link hoặc quét qr bên dưới để sử dụng dịch vụ<br>
-  <input value="${tarotLink}" readonly>
-  <button onclick="copyLink()">Copy</button>
-  <br><img class='qr' src="a.jpg">`;
- }else{
-  if(r<40) text="🎉 giảm giá 2% cho 1 câu bài tây nhanh  ";
-  else if(r<45) text="🎉 giảm giá  3% cho 1 câu bài tây nhanh";
-  else if(r<50) text="🎉 giảm giá  5% cho 1 câu bài tây nhanh ";
-  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần hãy copy link hoặc quét qr bên dưới để sử dụng dịch vụ <br>
-  <input value="${tarotLink}" readonly>
-  <button onclick="copyLink()">Copy</button>
-  <br><img class='qr' src="a.jpg">`;
- }
-
- localStorage.setItem("done_"+user,"1");
- let timeString = new Date().toLocaleString('vi-VN');
- let historyData = {
-     time: timeString,
-     rating: rating,
-     result: text
- };
- localStorage.setItem("history_"+user, JSON.stringify(historyData));
-
- document.getElementById("spinBox").classList.add("hidden");
- showPopup(text+"<br><b>📸 Chụp lại gửi ytho mới có hiệu lực nhaaa!</b>");
-}
-
-function viewHistory(){
- if(!user) {
-     let name=normalize(document.getElementById("fbName").value);
-     if(!name) return alert(" nhập tên FB để xem lịch sử nha ng dp!");
-     user = name;
- }
-
- let histStr = localStorage.getItem("history_"+user);
- if(histStr){
-     let hist = JSON.parse(histStr);
-     let html = `<div class="history-text">
-         <h3 style="color:#ff4d88; text-align:center; margin-top:0;">Lịch sử nhận thưởngg</h3>
-         <b>👤 Tên FB của ng dp:</b> ${user}<br>
-         <b>🕒 Thời gian:</b> ${hist.time}<br>
-         <b>⭐ Đánh giá:</b> ${hist.rating} sao<br>
-         <b>🎁 Phần thưởng:</b><br><br>
-         <div style="text-align:center;">${hist.result}</div>
-         </div>
-         <div style="text-align:center;"><b>📸 Chụp lại gửi ytho mới có hiệu lực nhaaa!</b></div>`;
-     showPopup(html);
- } else {
-     alert("FB '"+user+"' chưa có lịch sử gacha nào!");
- }
-}
-</script>
-
-</body>
-</html>
-}
-
-/* --- HÀM MỚI CHO HIỆU ỨNG SAO ĐÁNH GIÁ --- */
-function hoverStars(n) {
-  let stars = document.querySelectorAll(".stars span");
-  for (let i = 0; i < stars.length; i++) {
-    if (i < n) {
-      stars[i].classList.add("gold");
-    } else {
-      stars[i].classList.remove("gold");
-    }
-  }
-}
-
-function resetStars() {
-  let stars = document.querySelectorAll(".stars span");
-  for (let i = 0; i < stars.length; i++) {
-    stars[i].classList.remove("gold");
-  }
-}
-/* ---------------------------------------- */
-
-function rate(s){
- rating=s;
- document.getElementById("rating").classList.add("hidden");
- document.getElementById("spinBox").classList.remove("hidden");
-}
-
-function copyLink(){navigator.clipboard.writeText(tarotLink);alert("Đã copy thành công");}
-
-function showPopup(html){
- let p=document.getElementById("popup");
- p.innerHTML=html+"<br><button class='closeBtn' onclick='closePopup()'>Đónggg</button>";
- p.style.display="block";
-}
-
-function closePopup(){document.getElementById("popup").style.display="none";}
-
-function random(){return Math.random()*100;}
-
-function startGacha(){
- if(localStorage.getItem("done_"+user)){
-   alert("ng dp đã quay ròiii!");
-   return;
- }
-
- let r=random();
- let text="";
-
- if(rating>=4){
-  if(r<70) text="🎉 1 câu bài tây nhanh giá 3k";
-  else if(r<75) text="🎉1 câu bài tây nhanh giá 0k";
-  else if(r<80) text="🎉1 câu bài tây nhanh giá  5k";
-  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần hãy copy link hoặc quét qr bên dưới để sử dụng dịch vụ<br>
-  <input value="${tarotLink}" readonly>
-  <button onclick="copyLink()">Copy</button>
-  <br><img class='qr' src="a.jpg">`;
- }else{
-  if(r<40) text="🎉 giảm giá 2% cho 1 câu bài tây nhanh  ";
-  else if(r<45) text="🎉 giảm giá  3% cho 1 câu bài tây nhanh";
-  else if(r<50) text="🎉 giảm giá  5% cho 1 câu bài tây nhanh ";
-  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần hãy copy link hoặc quét qr bên dưới để sử dụng dịch vụ <br>
-  <input value="${tarotLink}" readonly>
-  <button onclick="copyLink()">Copy</button>
-  <br><img class='qr' src="a.jpg">`;
- }
-
- // Lưu trạng thái đã quay
- localStorage.setItem("done_"+user,"1");
- 
- // Lưu thêm thông tin lịch sử
- let timeString = new Date().toLocaleString('vi-VN');
- let historyData = {
-     time: timeString,
-     rating: rating,
-     result: text
- };
- localStorage.setItem("history_"+user, JSON.stringify(historyData));
-
- document.getElementById("spinBox").classList.add("hidden");
-
- showPopup(text+"<br><b>📸 Chụp lại gửi ytho mới có hiệu lực nhaaa!</b>");
-}
-
-function viewHistory(){
- // Nếu chưa xác nhận thì thử lấy từ ô input
  if(!user) {
      let name=normalize(document.getElementById("fbName").value);
      if(!name) return alert(" nhập tên FB để xem lịch sử nha ng dp!");
