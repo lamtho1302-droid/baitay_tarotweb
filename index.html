@@ -119,17 +119,17 @@ function startGacha(){
  let text="";
 
  if(rating>=4){
-  if(r<70) text="🎉 3k";
-  else if(r<75) text="🎉 0k";
-  else if(r<80) text="🎉 5k";
+  if(r<70) text="🎉 1 câu bài tây nhanh giá 3k";
+  else if(r<75) text="🎉1 câu bài tây nhanh giá 0k";
+  else if(r<80) text="🎉1 câu bài tây nhanh giá  5k";
   else text=`🎉 Tarot<br>
   <input value="${tarotLink}" readonly>
   <button onclick="copyLink()">Copy</button>
   <br><img class='qr' src="a.jpg">`;
  }else{
-  if(r<40) text="🎉 giảm 2%";
-  else if(r<45) text="🎉 giảm 3%";
-  else if(r<50) text="🎉 giảm 5%";
+  if(r<40) text="🎉 giảm 2% cho 1 câu bài tây nhanh  ";
+  else if(r<45) text="🎉 giảm 3% cho 1 câu bài tây nhanh";
+  else if(r<50) text="🎉 giảm 5% cho 1 câu bài tây nhanh ";
   else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần <br>
   <input value="${tarotLink}" readonly>
   <button onclick="copyLink()">Copy</button>
