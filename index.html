@@ -12,27 +12,32 @@ button{padding:8px 12px;border:none;border-radius:15px;background:#ff6fa5;color:
 .card{margin:20px auto;width:400px;background:#f1d9df;padding:20px;border-radius:20px;}
 .hidden{display:none;}
 
-/* --- CSS MỚI CHO HIỆU ỨNG SAO ĐÁNH GIÁ --- */
+/* --- CSS SAO ĐÁNH GIÁ --- */
 .stars span {
-  font-size: 40px; /* Chỉnh to lên một xíu cho dễ nhìn */
+  font-size: 40px;
   cursor: pointer;
-  color: transparent; /* Ngôi sao trong suốt */
-  -webkit-text-stroke: 2px black; /* Viền đen */
-  transition: all 0.2s ease; /* Hiệu ứng chuyển màu mượt mà */
+  color: transparent;
+  -webkit-text-stroke: 1.5px black; /* Viền đen khi chưa chọn */
+  transition: all 0.2s;
   display: inline-block;
 }
+/* Khi được tô vàng (do di chuột hoặc đã click) */
 .stars span.gold {
-  color: #ffcc00; /* Màu vàng khi di chuột vào */
-  -webkit-text-stroke: 0px; /* Bỏ viền đen khi đã vàng */
-  text-shadow: 0 0 3px #ffaa00; /* Thêm chút bóng cho lung linh */
+  color: #ffcc00;
+  -webkit-text-stroke: 0px;
+  text-shadow: 0 0 5px #ffaa00;
 }
-/* --------------------------------------- */
 
 .ruleBox{display:none;text-align:left;font-size:14px;background:white;padding:10px;border-radius:10px;margin-top:10px;}
 .popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.2);display:none;max-width:320px; max-height: 80vh; overflow-y: auto;}
 .qr{width:120px;margin-top:10px;}
 .closeBtn{margin-top:10px;background:#ff4d88;}
 .history-text {text-align: left; font-size: 14px; line-height: 1.5; margin-bottom: 15px;}
+
+/* Nút phụ sau khi đánh giá */
+.confirm-btns { margin-top: 15px; }
+.btn-ok { background: #4CAF50 !important; }
+.btn-again { background: #888 !important; }
 </style>
 </head>
 <body>
@@ -55,14 +60,19 @@ button{padding:8px 12px;border:none;border-radius:15px;background:#ff6fa5;color:
  <b> Lưu ý : Tất cả các phần thưởng gacha được phải chụp gửi ytho mới có hiệu lực, tính luôn cả giải thưởng lưu trong lịch sử đề phòng mọi người quên chụp ạaa</b><br>
 </div>
 
-<div id="rating" class="hidden">
+<div id="ratingArea" class="hidden">
 <h3>Đánh giá</h3>
-<div class="stars">
-<span onmouseover="hoverStars(1)" onmouseout="resetStars()" onclick="rate(1)">★</span>
-<span onmouseover="hoverStars(2)" onmouseout="resetStars()" onclick="rate(2)">★</span>
-<span onmouseover="hoverStars(3)" onmouseout="resetStars()" onclick="rate(3)">★</span>
-<span onmouseover="hoverStars(4)" onmouseout="resetStars()" onclick="rate(4)">★</span>
-<span onmouseover="hoverStars(5)" onmouseout="resetStars()" onclick="rate(5)">★</span>
+<div class="stars" id="starContainer">
+    <span onmouseover="hoverStars(1)" onmouseout="resetStars()" onclick="rate(1)">★</span>
+    <span onmouseover="hoverStars(2)" onmouseout="resetStars()" onclick="rate(2)">★</span>
+    <span onmouseover="hoverStars(3)" onmouseout="resetStars()" onclick="rate(3)">★</span>
+    <span onmouseover="hoverStars(4)" onmouseout="resetStars()" onclick="rate(4)">★</span>
+    <span onmouseover="hoverStars(5)" onmouseout="resetStars()" onclick="rate(5)">★</span>
+</div>
+
+<div id="confirmBtns" class="hidden confirm-btns">
+    <button class="btn-ok" onclick="confirmOk()">Okiii</button>
+    <button class="btn-again" onclick="reRate()">Đánh giá lại</button>
 </div>
 </div>
 
@@ -76,6 +86,7 @@ button{padding:8px 12px;border:none;border-radius:15px;background:#ff6fa5;color:
 <script>
 let user="";
 let rating=0;
+let tempRating=0; // Biến lưu số sao đã click
 let tarotLink="https://lamtho1302-droid.github.io/minigametarotytho/";
 
 function normalize(n){return n.trim().toLowerCase();}
@@ -84,7 +95,7 @@ function submitName(){
  let name=normalize(document.getElementById("fbName").value);
  if(!name) return alert("Nhập tên fb đii ng dp!");
 
- user=name; // Cập nhật user để có thể xem lịch sử
+ user=name; 
  if(localStorage.getItem("done_"+name)){
    alert("FB này đã quay rồi! ng dp có thể bấm vào 'Lịch sử' để xem lại nhé.");
    return;
@@ -104,8 +115,133 @@ function startRating(){
    alert("ng dp đã quay rồi! Hãy bấm xem Lịch sử nhaaa.");
    return;
  }
+ document.getElementById("ratingArea").classList.remove("hidden");
+ reRate(); // Reset về trạng thái chưa chọn
+}
 
- document.getElementById("rating").classList.remove("hidden");
+// Hiệu ứng di chuột
+function hoverStars(n) {
+  updateStarColors(n);
+}
+
+// Reset màu khi không di chuột (nhưng vẫn giữ màu nếu đã click)
+function resetStars() {
+  updateStarColors(tempRating);
+}
+
+// Hàm tô màu sao chung
+function updateStarColors(n) {
+  let stars = document.querySelectorAll(".stars span");
+  stars.forEach((star, index) => {
+    if (index < n) star.classList.add("gold");
+    else star.classList.remove("gold");
+  });
+}
+
+// Khi ấn chọn số sao
+function rate(s){
+ tempRating = s;
+ rating = s;
+ updateStarColors(s);
+ document.getElementById("confirmBtns").classList.remove("hidden");
+}
+
+// Ấn nút Đánh giá lại
+function reRate() {
+    tempRating = 0;
+    rating = 0;
+    updateStarColors(0);
+    document.getElementById("confirmBtns").classList.add("hidden");
+    document.getElementById("spinBox").classList.add("hidden");
+    document.getElementById("ratingArea").classList.remove("hidden");
+}
+
+// Ấn nút Okiii
+function confirmOk() {
+    document.getElementById("ratingArea").classList.add("hidden");
+    document.getElementById("spinBox").classList.remove("hidden");
+}
+
+function copyLink(){navigator.clipboard.writeText(tarotLink);alert("Đã copy thành công");}
+
+function showPopup(html){
+ let p=document.getElementById("popup");
+ p.innerHTML=html+"<br><button class='closeBtn' onclick='closePopup()'>Đónggg</button>";
+ p.style.display="block";
+}
+
+function closePopup(){document.getElementById("popup").style.display="none";}
+
+function random(){return Math.random()*100;}
+
+function startGacha(){
+ if(localStorage.getItem("done_"+user)){
+   alert("ng dp đã quay ròiii!");
+   return;
+ }
+
+ let r=random();
+ let text="";
+
+ if(rating>=4){
+  if(r<70) text="🎉 1 câu bài tây nhanh giá 3k";
+  else if(r<75) text="🎉1 câu bài tây nhanh giá 0k";
+  else if(r<80) text="🎉1 câu bài tây nhanh giá  5k";
+  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần copy link hoặc quét qr bên dưới để sử dụng dịch vụ<br>
+  <input value="${tarotLink}" readonly>
+  <button onclick="copyLink()">Copy</button>
+  <br><img class='qr' src="a.jpg">`;
+ }else{
+  if(r<40) text="🎉 giảm giá 2% cho 1 câu bài tây nhanh  ";
+  else if(r<45) text="🎉 giảm giá  3% cho 1 câu bài tây nhanh";
+  else if(r<50) text="🎉 giảm giá  5% cho 1 câu bài tây nhanh ";
+  else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần copy link hoặc quét qr bên dưới để sử dụng dịch vụ <br>
+  <input value="${tarotLink}" readonly>
+  <button onclick="copyLink()">Copy</button>
+  <br><img class='qr' src="a.jpg">`;
+ }
+
+ localStorage.setItem("done_"+user,"1");
+ let timeString = new Date().toLocaleString('vi-VN');
+ let historyData = {
+     time: timeString,
+     rating: rating,
+     result: text
+ };
+ localStorage.setItem("history_"+user, JSON.stringify(historyData));
+
+ document.getElementById("spinBox").classList.add("hidden");
+ showPopup(text+"<br><b>📸 Chụp lại gửi ytho mới có hiệu lực nhaaa!</b>");
+}
+
+function viewHistory(){
+ if(!user) {
+     let name=normalize(document.getElementById("fbName").value);
+     if(!name) return alert(" nhập tên FB để xem lịch sử nha ng dp!");
+     user = name;
+ }
+
+ let histStr = localStorage.getItem("history_"+user);
+ if(histStr){
+     let hist = JSON.parse(histStr);
+     let html = `<div class="history-text">
+         <h3 style="color:#ff4d88; text-align:center; margin-top:0;">Lịch sử nhận thưởngg</h3>
+         <b>👤 Tên FB của ng dp:</b> ${user}<br>
+         <b>🕒 Thời gian:</b> ${hist.time}<br>
+         <b>⭐ Đánh giá:</b> ${hist.rating} sao<br>
+         <b>🎁 Phần thưởng:</b><br><br>
+         <div style="text-align:center;">${hist.result}</div>
+         </div>
+         <div style="text-align:center;"><b>📸 Chụp lại gửi ytho mới có hiệu lực nhaaa!</b></div>`;
+     showPopup(html);
+ } else {
+     alert("FB '"+user+"' chưa có lịch sử gacha nào!");
+ }
+}
+</script>
+
+</body>
+</html>
 }
 
 /* --- HÀM MỚI CHO HIỆU ỨNG SAO ĐÁNH GIÁ --- */
