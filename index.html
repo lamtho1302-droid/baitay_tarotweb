@@ -33,9 +33,9 @@ button{padding:8px 12px;border:none;border-radius:15px;background:#ff6fa5;color:
 
 <div id="rule" class="ruleBox">
 <b> thể lệ khi đánh giá bằng hoặc trên 4⭐:</b><br>
-70% : 3k<br>5% : 0k<br>5% : 5k<br>20% : 3 câu trải nghiệm tự bóc tarot web (5 lá )<br><br>
+70% :1 câu bài tây nhanh giá 3k<br>5% :1 câu bài tây nhanh giá 0k<br>5% :1 câu bài tây nhanh giá 5k<br>20% : 3 câu trải nghiệm tự bóc tarot web (5 lá )<br><br>
 <b> thể lệ khi đánh giá bằng hoặc dưới 4⭐:</b><br>
-40% : giảm 2%<br>5% : giảm 3%<br>5% : giảm 5%<br>50% : 3 câu trải nghiệm tự bóc tarot web (5 lá )
+40% : giảm giá 2% cho 1 câu bài tây nhanh <br>5% : giảm giá 3% cho 1 câu bài tây nhanh <br>5% : giảm giá 5% cho 1 câu bài tây nhanh<br>50% : 3 câu trải nghiệm tự bóc tarot web (5 lá )
 </div>
 
 <div id="rating" class="hidden">
@@ -81,7 +81,7 @@ function toggleRule(){
 }
 
 function startRating(){
- if(!user){alert("Nhập tên đi ng dp!");return;}
+ if(!user){alert("Nhập tên fb đi ng dp!");return;}
 
  if(localStorage.getItem("done_"+user)){
    alert("ng dp đã quay rồi! Hãy bấm xem Lịch sử nhaaa.");
@@ -127,9 +127,9 @@ function startGacha(){
   <button onclick="copyLink()">Copy</button>
   <br><img class='qr' src="a.jpg">`;
  }else{
-  if(r<40) text="🎉 giảm 2% cho 1 câu bài tây nhanh  ";
-  else if(r<45) text="🎉 giảm 3% cho 1 câu bài tây nhanh";
-  else if(r<50) text="🎉 giảm 5% cho 1 câu bài tây nhanh ";
+  if(r<40) text="🎉 giảm giá 2% cho 1 câu bài tây nhanh  ";
+  else if(r<45) text="🎉 giảm giá  3% cho 1 câu bài tây nhanh";
+  else if(r<50) text="🎉 giảm giá  5% cho 1 câu bài tây nhanh ";
   else text=`🎉 trải nghiệm tự bóc Tarot web 3 lần <br>
   <input value="${tarotLink}" readonly>
   <button onclick="copyLink()">Copy</button>
